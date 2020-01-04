@@ -6,13 +6,19 @@ import Cocoa
 /// then fade out.
 public class BezelNotification {
     
-    private let text: String
-    private let window: NSWindow
-    private let visibleTime: TimeInterval
+    public var text: String {
+        didSet {
+            label.stringValue = text
+        }
+    }
+    
+    let window: NSWindow
+    let visibleTime: TimeInterval
+    var label: NSTextField!
     
     /// Create a BezelNotification with the given text. It is not displayed until `show()` or `runModal()` is called.
     /// The text is displayed with regular weight and a font size of 18, on a single line.
-    public init(text: String,
+    public init(text: String = "",
                 visibleTime: TimeInterval = 2.0) {
         self.text = text
         self.window = NSWindow(contentRect: NSRect(origin: .zero, size: CGSize(width: 100, height: 100)),
@@ -41,8 +47,8 @@ public class BezelNotification {
         let newSession = NotificationSession(modal: false)
         self.previousShowSession = newSession
         fadeIn(session: newSession)
-        window.center()
         window.makeKeyAndOrderFront(nil)
+        window.center()
     }
     
     /// Show the notification, wait 3 seconds and fade out. Does not return until the fade out is over.
@@ -76,7 +82,7 @@ public class BezelNotification {
             visualEffectView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor)
         ])
         
-        let label = NSTextField(labelWithString: self.text)
+        label = NSTextField(labelWithString: self.text)
         label.translatesAutoresizingMaskIntoConstraints = false
         label.font = NSFont.systemFont(ofSize: 18)
         label.setContentHuggingPriority(.defaultHigh, for: .horizontal)
