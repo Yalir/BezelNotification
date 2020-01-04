@@ -19,3 +19,9 @@ bezel.runModal()
 // or
 bezel.show()
 ```
+or
+```swift
+let bezel = BezelNotification(visibleTime: 3.0)
+bezel.text = "Hello!"
+bezel.show()
+```
