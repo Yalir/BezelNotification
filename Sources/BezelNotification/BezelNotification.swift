@@ -75,7 +75,7 @@ public class BezelNotification {
         visualEffectView.material = .hudWindow
         visualEffectView.state = .active
         contentView.addSubview(visualEffectView)
-        contentView.addConstraints([
+        NSLayoutConstraint.activate([
             visualEffectView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
             visualEffectView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
             visualEffectView.topAnchor.constraint(equalTo: contentView.topAnchor),
@@ -91,7 +91,7 @@ public class BezelNotification {
         label.setContentCompressionResistancePriority(.required, for: .horizontal)
         visualEffectView.addSubview(label)
         
-        visualEffectView.addConstraints([
+        NSLayoutConstraint.activate([
             label.leadingAnchor.constraint(equalTo: visualEffectView.leadingAnchor, constant: 10),
             label.trailingAnchor.constraint(equalTo: visualEffectView.trailingAnchor, constant: -10),
             label.topAnchor.constraint(equalTo: visualEffectView.topAnchor, constant: 10),
