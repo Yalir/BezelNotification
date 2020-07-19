@@ -21,7 +21,17 @@ bezel.show()
 ```
 or
 ```swift
-let bezel = BezelNotification(visibleTime: 3.0)
+let bezel = BezelNotification(dismissInterval: 3.0)
 bezel.text = "Hello!"
 bezel.show()
+```
+or
+```swift
+let bezel = BezelNotification(dismissInterval: nil)
+bezel.text = "Hello!"
+bezel.show()
+// do your work
+
+// Explicitly dismiss now:
+bezel.dismiss()
 ```

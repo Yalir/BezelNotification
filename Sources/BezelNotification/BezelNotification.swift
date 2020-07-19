@@ -2,7 +2,7 @@ import Cocoa
 
 
 /// A utility class for displaying Xcode-like notifications, aka bezel notifications.
-/// It currently only supports displaying a given text that will be centered on screen, will remain on screen for 3 seconds,
+/// It currently only supports displaying a given text that will be centered on screen, will remain on screen for a given interval,
 /// then fade out.
 public class BezelNotification {
     
@@ -13,17 +13,22 @@ public class BezelNotification {
     }
     
     let window: NSWindow
-    let visibleTime: TimeInterval
+    let dismissInterval: TimeInterval?
     var label: NSTextField!
     
     /// Create a BezelNotification with the given text. It is not displayed until `show()` or `runModal()` is called.
-    /// The text is displayed with regular weight and a font size of 18, on a single line.
+    /// It is then dismissed based on the given dismissInterval or when `dismiss()` is called.
+    ///
+    /// - Parameters:
+    ///   - text: The text displayed with regular weight and a font size of 18, on a single line.
+    ///   - dismissInterval: If not nil, the bezel notification is automatically dismiss after this interval. Otherwise it
+    /// remains visible until `dismiss()` is called.
     public init(text: String = "",
-                visibleTime: TimeInterval = 2.0) {
+                dismissInterval: TimeInterval? = 2.0) {
         self.text = text
         self.window = NSWindow(contentRect: NSRect(origin: .zero, size: CGSize(width: 100, height: 100)),
                                styleMask: .borderless, backing: .buffered, defer: true)
-        self.visibleTime = visibleTime
+        self.dismissInterval = dismissInterval
         buildUI()
     }
     
@@ -49,6 +54,12 @@ public class BezelNotification {
         fadeIn(session: newSession)
         window.makeKeyAndOrderFront(nil)
         window.center()
+    }
+    
+    public func dismiss() {
+        guard let session = self.previousShowSession, !session.cancelled else { return }
+        session.cancelled = true
+        self.fadeOut(session: session)
     }
     
     /// Show the notification, wait 3 seconds and fade out. Does not return until the fade out is over.
@@ -105,8 +116,10 @@ public class BezelNotification {
             context.duration = 0.1
             window.animator().alphaValue = 1.0
         }, completionHandler: {
-            guard !session.cancelled else { return }
-            let timer = Timer(timeInterval: self.visibleTime, repeats: false) { _ in
+            guard !session.cancelled, let dismissInterval = self.dismissInterval else {
+                return
+            }
+            let timer = Timer(timeInterval: dismissInterval, repeats: false) { _ in
                 self.fadeOut(session: session)
             }
             
