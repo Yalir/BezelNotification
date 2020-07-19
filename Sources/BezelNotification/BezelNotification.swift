@@ -52,6 +52,8 @@ public class BezelNotification {
     
     var previousShowSession: NotificationSession?
     
+    public var isVisible: Bool { window.isVisible && window.alphaValue != 0 }
+    
     /// Show the notification then return. After 3 seconds, the notification will fade out.
     public func show() {
         fadeOutTimer?.invalidate()
@@ -62,7 +64,7 @@ public class BezelNotification {
         self.previousShowSession = newSession
         fadeIn(session: newSession)
         
-        let alreadyVisible = window.isVisible && window.alphaValue != 0
+        let alreadyVisible = self.isVisible
         window.makeKeyAndOrderFront(nil)
         
         if !alreadyVisible {
@@ -124,10 +126,13 @@ public class BezelNotification {
         ])
     }
     
+    static let fadeInAnimationDuration: TimeInterval = 0.1
+    static let fadeOutAnimationDuration: TimeInterval = 0.5
+    
     var fadeOutTimer: Timer?
     func fadeIn(session: NotificationSession) {
         NSAnimationContext.runAnimationGroup({ context in
-            context.duration = 0.1
+            context.duration = Self.fadeInAnimationDuration
             window.animator().alphaValue = 1.0
         }, completionHandler: {
             guard !session.cancelled, let dismissInterval = self.dismissInterval else {
@@ -146,7 +151,7 @@ public class BezelNotification {
     func fadeOut(session: NotificationSession) {
         window.alphaValue = 1.0
         NSAnimationContext.runAnimationGroup({ context in
-            context.duration = 0.5
+            context.duration = Self.fadeOutAnimationDuration
             window.animator().alphaValue = 0.0
         }, completionHandler: {
             if session.modal {
