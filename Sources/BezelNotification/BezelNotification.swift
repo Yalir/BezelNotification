@@ -6,9 +6,14 @@ import Cocoa
 /// then fade out.
 public class BezelNotification {
     
-    public var text: String {
+    public var string: String {
+        set { self.attributedString = NSAttributedString(string: newValue) }
+        get { self.attributedString.string }
+    }
+    
+    public var attributedString: NSAttributedString {
         didSet {
-            label.stringValue = text
+            label.attributedStringValue = attributedString
         }
     }
     
@@ -23,13 +28,17 @@ public class BezelNotification {
     ///   - text: The text displayed with regular weight and a font size of 18, on a single line.
     ///   - dismissInterval: If not nil, the bezel notification is automatically dismiss after this interval. Otherwise it
     /// remains visible until `dismiss()` is called.
-    public init(text: String = "",
+    public init(text: NSAttributedString = NSAttributedString(string: ""),
                 dismissInterval: TimeInterval? = 2.0) {
-        self.text = text
+        self.attributedString = text
         self.window = NSWindow(contentRect: NSRect(origin: .zero, size: CGSize(width: 100, height: 100)),
                                styleMask: .borderless, backing: .buffered, defer: true)
         self.dismissInterval = dismissInterval
         buildUI()
+    }
+    
+    convenience init(text: String = "", dismissInterval: TimeInterval? = 2.0) {
+        self.init(text: NSAttributedString(string: text), dismissInterval: dismissInterval)
     }
     
     class NotificationSession {
@@ -52,8 +61,13 @@ public class BezelNotification {
         let newSession = NotificationSession(modal: false)
         self.previousShowSession = newSession
         fadeIn(session: newSession)
+        
+        let alreadyVisible = window.isVisible && window.alphaValue != 0
         window.makeKeyAndOrderFront(nil)
-        window.center()
+        
+        if !alreadyVisible {
+            window.center()
+        }
     }
     
     public func dismiss() {
@@ -93,7 +107,7 @@ public class BezelNotification {
             visualEffectView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor)
         ])
         
-        label = NSTextField(labelWithString: self.text)
+        label = NSTextField(labelWithAttributedString: self.attributedString)
         label.translatesAutoresizingMaskIntoConstraints = false
         label.font = NSFont.systemFont(ofSize: 18)
         label.setContentHuggingPriority(.defaultHigh, for: .horizontal)
