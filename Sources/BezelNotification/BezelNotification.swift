@@ -140,6 +140,9 @@ public class BezelNotification {
                 return
             }
             let timer = Timer(timeInterval: dismissInterval, repeats: false) { _ in
+                guard !session.cancelled else {
+                    return
+                }
                 self.fadeOut(session: session)
             }
             
@@ -150,6 +153,7 @@ public class BezelNotification {
     }
     
     func fadeOut(session: NotificationSession) {
+        session.cancelled = true
         window.alphaValue = 1.0
         NSAnimationContext.runAnimationGroup({ context in
             context.duration = Self.fadeOutAnimationDuration
