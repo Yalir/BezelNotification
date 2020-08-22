@@ -87,6 +87,7 @@ public class BezelNotification {
     func buildUI() {
         window.hasShadow = false
         window.level = .modalPanel
+        window.hidesOnDeactivate = true
         window.backgroundColor = .clear
         window.alphaValue = 0
         
