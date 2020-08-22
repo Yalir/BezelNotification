@@ -28,8 +28,8 @@ public class BezelNotification {
     ///   - text: The text displayed with regular weight and a font size of 18, on a single line.
     ///   - dismissInterval: If not nil, the bezel notification is automatically dismiss after this interval. Otherwise it
     /// remains visible until `dismiss()` is called.
-    public init(text: NSAttributedString = NSAttributedString(string: ""),
-                dismissInterval: TimeInterval? = 2.0) {
+    public init(text: NSAttributedString,
+                dismissInterval: TimeInterval?) {
         self.attributedString = text
         self.window = NSWindow(contentRect: NSRect(origin: .zero, size: CGSize(width: 100, height: 100)),
                                styleMask: .borderless, backing: .buffered, defer: true)
@@ -37,7 +37,7 @@ public class BezelNotification {
         buildUI()
     }
     
-    convenience init(text: String = "", dismissInterval: TimeInterval? = 2.0) {
+    public convenience init(text: String = "", dismissInterval: TimeInterval? = 2.0) {
         self.init(text: NSAttributedString(string: text), dismissInterval: dismissInterval)
     }
     
@@ -54,7 +54,8 @@ public class BezelNotification {
     
     public var isVisible: Bool { window.isVisible && window.alphaValue != 0 }
     
-    /// Show the notification then return. After 3 seconds, the notification will fade out.
+    /// Show the notification then return. The notification will automatically
+    /// fade out after the given interval.
     public func show() {
         fadeOutTimer?.invalidate()
         fadeOutTimer = nil
