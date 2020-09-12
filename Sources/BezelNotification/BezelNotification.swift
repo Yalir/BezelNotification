@@ -101,7 +101,7 @@ public class BezelNotification {
         self.window.contentView = contentView
         let visualEffectView = NSVisualEffectView(frame: self.window.frame)
         visualEffectView.translatesAutoresizingMaskIntoConstraints = false
-        visualEffectView.material = .hudWindow
+        visualEffectView.material = .popover
         visualEffectView.state = .active
         contentView.addSubview(visualEffectView)
         NSLayoutConstraint.activate([
