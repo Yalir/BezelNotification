@@ -17,6 +17,9 @@ public class BezelNotification {
         }
     }
     
+    public var fadeInAnimationDuration: TimeInterval = 0.1
+    public var fadeOutAnimationDuration: TimeInterval = 0.5
+    
     let window: NSWindow
     let dismissInterval: TimeInterval?
     var label: NSTextField!
@@ -128,13 +131,10 @@ public class BezelNotification {
         ])
     }
     
-    static let fadeInAnimationDuration: TimeInterval = 0.1
-    static let fadeOutAnimationDuration: TimeInterval = 0.5
-    
     var fadeOutTimer: Timer?
     func fadeIn(session: NotificationSession) {
         NSAnimationContext.runAnimationGroup({ context in
-            context.duration = Self.fadeInAnimationDuration
+            context.duration = fadeInAnimationDuration
             window.animator().alphaValue = 1.0
         }, completionHandler: {
             guard !session.cancelled, let dismissInterval = self.dismissInterval else {
@@ -157,7 +157,7 @@ public class BezelNotification {
         session.cancelled = true
         window.alphaValue = 1.0
         NSAnimationContext.runAnimationGroup({ context in
-            context.duration = Self.fadeOutAnimationDuration
+            context.duration = fadeOutAnimationDuration
             window.animator().alphaValue = 0.0
         }, completionHandler: {
             if session.modal {
