@@ -60,6 +60,42 @@ public class BezelNotification {
     /// Show the notification then return. The notification will automatically
     /// fade out after the given interval.
     public func show() {
+        let alreadyVisible = self.isVisible
+        _show()
+        
+        if !alreadyVisible {
+            window.center()
+        }
+    }
+    
+    public enum Location {
+        case topRight
+    }
+    
+    public func show(relativeTo location: Location, of parentWindow: NSWindow) {
+        _show()
+        
+        let contentView = parentWindow.contentView!
+        let frame = parentWindow
+            .convertToScreen(contentView
+                .convert(contentView.frame, to: nil))
+        let notificationSize = self.window.frame.size
+        let margin = CGFloat(20)
+
+        switch location {
+        case .topRight:
+            var topRight = CGPoint(x: frame.origin.x + frame.size.width,
+                                   y: frame.origin.y + frame.size.height)
+            topRight.x -= margin
+            topRight.y -= margin
+            
+            let notificationOrigin = CGPoint(x: topRight.x - notificationSize.width,
+                                             y: topRight.y - notificationSize.height)
+            self.window.setFrameOrigin(notificationOrigin)
+        }
+    }
+    
+    func _show() {
         fadeOutTimer?.invalidate()
         fadeOutTimer = nil
         previousShowSession?.cancelled = true
@@ -68,12 +104,7 @@ public class BezelNotification {
         self.previousShowSession = newSession
         fadeIn(session: newSession)
         
-        let alreadyVisible = self.isVisible
         window.makeKeyAndOrderFront(nil)
-        
-        if !alreadyVisible {
-            window.center()
-        }
     }
     
     public func dismiss() {
