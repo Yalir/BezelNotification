@@ -22,7 +22,7 @@ public class BezelNotification {
     
     let window: NSWindow
     let dismissInterval: TimeInterval?
-    var label: NSTextField!
+    let label = NSTextField(labelWithString: "")
     
     /// Create a BezelNotification with the given text. It is not displayed until `show()` or `runModal()` is called.
     /// It is then dismissed based on the given dismissInterval or when `dismiss()` is called.
@@ -145,7 +145,7 @@ public class BezelNotification {
             visualEffectView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor)
         ])
         
-        label = NSTextField(labelWithAttributedString: self.attributedString)
+        label.attributedStringValue = self.attributedString
         label.translatesAutoresizingMaskIntoConstraints = false
         label.font = NSFont.systemFont(ofSize: 18)
         label.setContentHuggingPriority(.defaultHigh, for: .horizontal)
